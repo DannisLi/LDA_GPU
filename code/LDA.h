@@ -187,9 +187,9 @@ void serial_LDA(CORPUS* corpus, int topic_num, float alpha, float beta, MATRIX* 
 }
 
 
-__constant__ corpus_doc_index[4000];
+__constant__ int corpus_doc_index[4000];
 
-__global__ static void parallel_LDA_kernel(CORPUS* corpus, int topic_num, float alpha, float beta, float** topic_doc_cnts, float*** topic_word_cnts_p, int* topic_cnts, float** doc_word_topics_d, int seed) {
+__global__ static void parallel_LDA_kernel(CORPUS* corpus, int topic_num, float alpha, float beta, float** topic_doc_cnts, float*** topic_word_cnts_p, int* topic_cnts, int** doc_word_topics_d, int seed) {
     // 矩阵topic_doc_cnts的行指针
     __shared__ float* topic_doc_cnts_rows[8];
     // 每个矩阵topic_word_cnts的行指针
@@ -203,7 +203,7 @@ __global__ static void parallel_LDA_kernel(CORPUS* corpus, int topic_num, float 
     // 提前计算voc_size * beta
     float voc_size_times_beta = corpus->voc_size * beta;
     // 暂存doc_word_topics
-    int temp[topic_num];
+    int temp[8];
     // 循环控制变量
     int i, j, k, h, m, epoch;
     // token的主题
@@ -265,7 +265,6 @@ __global__ static void parallel_LDA_kernel(CORPUS* corpus, int topic_num, float 
                             // 添加新的主题标记
                             topic_doc_cnts_rows[z][i]++;
                             topic_word_cnts_rows_p[threadIdx.x][z][w]++;
-                            topic_word_cnts_data_p[threadIdx.x][z][w]++;
                             topic_cnts_p[threadIdx.x][z]++;
                             doc_word_topics_d[z][j]++;
                         }
@@ -332,7 +331,7 @@ void parallel_LDA(CORPUS* corpus_h, int topic_num, float alpha, float beta, MATR
     int topic_cnts_h[topic_num], *topic_cnts_d;
     // doc-word-topic
     int *doc_word_topics_h[topic_num], **doc_word_topics_d, *doc_word_topics_tmp[topic_num];
-    int i, j, w, z;
+    int i, j, w, z, cnt, doc_num = corpus_h->doc_num;
 
     // 初始化topic counts
     memset(topic_cnts_h, 0 ,sizeof(int)*topic_num);
