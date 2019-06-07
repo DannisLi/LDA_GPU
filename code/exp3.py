@@ -1,5 +1,9 @@
 # coding:utf8
 
+'''
+thread_num kos
+'''
+
 import os
 import matplotlib.pyplot as plt
 
@@ -28,7 +32,7 @@ ln1 = ax.plot(thread_num_list, gpu_perp_list, color='b', marker='o', label='log 
 ax2 = ax.twinx()
 ln2 = ax.plot(thread_num_list, gpu_time_list, color='r', marker='o', label='used time')
 
-ax.legend(ln1+ln2, [ln1.get_label(),ln2.get_label()])
+fig.legend()
 
 ax.set_xlabel('thread number')
 ax.set_ylabel('log likelihood')

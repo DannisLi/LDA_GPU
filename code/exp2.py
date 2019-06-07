@@ -1,5 +1,9 @@
 # coding:utf8
 
+'''
+n_epoch nips
+'''
+
 import os
 import matplotlib.pyplot as plt
 
