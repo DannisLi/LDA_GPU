@@ -169,7 +169,6 @@ MATRIX* MATRIX_create_the_same_on_device(MATRIX* mat_h) {
 float** MATRIX_create_core_on_device(MATRIX* mat_h) {
     int i;
     float** core_d;
-    MATRIX mat_tmp;
     float* row_ptrs[mat_h->row];
 
     for(i=0; i<mat_h->row; i++) {
@@ -179,7 +178,7 @@ float** MATRIX_create_core_on_device(MATRIX* mat_h) {
     cudaMalloc(&core_d, sizeof(float*)*mat_h->row);
     cudaMemcpy(core_d, row_ptrs, sizeof(float*)*mat_h->row, cudaMemcpyHostToDevice);
 
-    return mat_d;
+    return core_d;
 }
 
 
