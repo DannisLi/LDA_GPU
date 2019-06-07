@@ -104,7 +104,7 @@ double LDA_evaluate(CORPUS* corpus, MATRIX* topic_doc_cnts, MATRIX* topic_word_c
 
 // 功能：串行化LDA算法
 void serial_LDA(CORPUS* corpus, int topic_num, float alpha, float beta, MATRIX* topic_doc_cnts,  MATRIX* topic_word_cnts) {
-    int i, j, k, h, m, w, z, cnt, epoch, doc_num = corpus->doc_num, voc_size = corpus->voc_size;
+    int i, j, k, h, m, w, z, cnt, epoch, doc_num = corpus->doc_num;
     float prob[topic_num];
     int temp[topic_num];
     int topic_cnts[topic_num];
@@ -322,7 +322,7 @@ __global__ static void parallel_LDA_kernel(CORPUS* corpus, int topic_num, float 
 
 void parallel_LDA(CORPUS* corpus_h, int topic_num, float alpha, float beta, MATRIX* topic_doc_cnts_h, MATRIX* topic_word_cnts_h) { 
     // topic doc
-    float **topic_doc_cnts_d, *topic_doc_rows_d[topic_num];
+    float **topic_doc_cnts_d;
     // topic word
     float ***topic_word_cnts_d_p, **topic_word_cnts_tmp[thread_num + 1];    // 每个线程有单独的计数
     // corpus
