@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 
 
 
-n_epoch_list = list(range(10, 201, 10))
+n_epoch_list = list(range(10, 151, 10))
 cpu_perp_list, cpu_time_list = [],[]
 gpu_perp_list, gpu_time_list = [],[]
 
@@ -52,6 +52,6 @@ plt.plot(n_epoch_list, cpu_time_list, label='cpu', color='b', marker='o')
 plt.plot(n_epoch_list, gpu_time_list, label='gpu', color='r', marker='o')
 plt.legend()
 plt.xlabel('epoch')
-plt.ylabel('used time')
+plt.ylabel('used time (s)')
 plt.savefig('kos_time.png')
 plt.close()
