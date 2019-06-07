@@ -12,14 +12,16 @@ cpu_perp_list, cpu_time_list = [],[]
 gpu_perp_list, gpu_time_list = [],[]
 
 for n_epoch in n_epoch_list:
-    gpu_res = os.popen('./a.out kos 4 1 %d 256 5' % n_epoch)
-    cpu_res = os.popen('./a.out kos 4 0 %d' % n_epoch)
+    gpu_perp,cpu_perp = 0,0
+    for i in range(5):
+        gpu_res = os.popen('./a.out kos 4 1 %d 256 5' % n_epoch)
+        cpu_res = os.popen('./a.out kos 4 0 %d' % n_epoch)
     
-    gpu_res = gpu_res.readlines()
-    cpu_res = cpu_res.readlines()
+        gpu_res = gpu_res.readlines()
+        cpu_res = cpu_res.readlines()
     
-    gpu_perp = float(gpu_res[0].strip())
-    cpu_perp = float(cpu_res[0].strip())
+        gpu_perp += float(gpu_res[0].strip()) / 5.
+        cpu_perp += float(cpu_res[0].strip()) / 5.
     
     # time = int(res[1].strip())
     print(n_epoch, gpu_perp, cpu_perp)
