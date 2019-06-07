@@ -172,7 +172,7 @@ void serial_LDA(CORPUS* corpus, int topic_num, float alpha, float beta, MATRIX* 
             }
         }
     }
-    printf("after perp: %lf\n", LDA_evaluate(corpus, topic_doc_cnts, topic_word_cnts));
+    printf("%lf\n", LDA_evaluate(corpus, topic_doc_cnts, topic_word_cnts));
 
 
     for(i=0; i<topic_num; i++) {
@@ -183,7 +183,7 @@ void serial_LDA(CORPUS* corpus, int topic_num, float alpha, float beta, MATRIX* 
 
 __constant__ int corpus_doc_index[4000];
 
-__global__ static void parallel_LDA_kernel(CORPUS* corpus, int topic_num, float alpha, float beta, float** topic_doc_cnts, float*** topic_word_cnts_p, int* topic_cnts, int** doc_word_topics_d, int seed, int n_epoch, int thread_num) {
+__global__ static void parallel_LDA_kernel(CORPUS* corpus, int topic_num, float alpha, float beta, float** topic_doc_cnts, float*** topic_word_cnts_p, int* topic_cnts, int** doc_word_topics_d, int seed, int n_epoch, int thread_num, int sync_epoch) {
     // 矩阵topic_doc_cnts的行指针
     __shared__ float* topic_doc_cnts_rows[8];
     // 每个矩阵topic_word_cnts的行指针
@@ -266,7 +266,7 @@ __global__ static void parallel_LDA_kernel(CORPUS* corpus, int topic_num, float 
                 }
             }
         }
-        if(epoch%5==0) {
+        if(epoch%sync_epoch==0) {
             // 统一一次计数矩阵
             // MATRIX_sub(topic_word_cnts_p[threadIdx.x], topic_word_cnts_p[thread_num]);
             for(i=0; i<topic_num; i++) {
@@ -312,7 +312,7 @@ __global__ static void parallel_LDA_kernel(CORPUS* corpus, int topic_num, float 
 }
 
 
-void parallel_LDA(CORPUS* corpus_h, int topic_num, float alpha, float beta, MATRIX* topic_doc_cnts_h, MATRIX* topic_word_cnts_h, int n_epoch, int thread_num) { 
+void parallel_LDA(CORPUS* corpus_h, int topic_num, float alpha, float beta, MATRIX* topic_doc_cnts_h, MATRIX* topic_word_cnts_h, int n_epoch, int thread_num, int sync_epoch) { 
     // topic doc
     float **topic_doc_cnts_d;
     // topic word
@@ -380,7 +380,7 @@ void parallel_LDA(CORPUS* corpus_h, int topic_num, float alpha, float beta, MATR
     
     // printf("before perp: %lf\n", LDA_evaluate(corpus_h, topic_doc_cnts_h, topic_word_cnts_h));
     // 在设备端运行LDA算法
-    parallel_LDA_kernel<<<1, thread_num>>>(corpus_d, topic_num, alpha, beta, topic_doc_cnts_d, topic_word_cnts_d_p, topic_cnts_d, doc_word_topics_d, rand(), n_epoch, thread_num);
+    parallel_LDA_kernel<<<1, thread_num>>>(corpus_d, topic_num, alpha, beta, topic_doc_cnts_d, topic_word_cnts_d_p, topic_cnts_d, doc_word_topics_d, rand(), n_epoch, thread_num, sync_epoch);
 
     // 拷贝设备端的计数矩阵
     MATRIX_move_core_to_host(topic_doc_cnts_h, topic_doc_cnts_d);

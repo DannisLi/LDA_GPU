@@ -10,7 +10,7 @@
 
 
 
-// ./a.out corpus_name topic_num USE_GPU n_epoch thread_num
+// ./a.out corpus_name topic_num USE_GPU n_epoch thread_num sync_epoch
 int main(int argc, char** argv) {
     // 主题数量
     int topic_num;
@@ -20,6 +20,8 @@ int main(int argc, char** argv) {
     int n_epoch;
     // 线程数量
     int thread_num;
+    // 同步的轮数
+    int sync_epoch;
     // 语料库的名字和路径
     char name[10], *corpus_path, *vocab_path;
     // 先验参数
@@ -36,9 +38,10 @@ int main(int argc, char** argv) {
     topic_num = atoi(argv[2]);
     USE_GPU = atoi(argv[3]);
     n_epoch = atoi(argv[4]);
-    if(USE_GPU)
+    if(USE_GPU) {
         thread_num = atoi(argv[5]);
-    
+        sync_epoch = atoi(argv[6]);
+    }
 
     // 将名字映射为路径
     if(strcmp(name, "kos") == 0) {
@@ -76,7 +79,7 @@ int main(int argc, char** argv) {
     used_time = time(NULL);
     if(USE_GPU) {
         cudaSetDevice(0);
-        parallel_LDA(corpus, topic_num, alpha, beta, topic_doc_cnts, topic_word_cnts, n_epoch, thread_num);
+        parallel_LDA(corpus, topic_num, alpha, beta, topic_doc_cnts, topic_word_cnts, n_epoch, thread_num, sync_epoch);
     } else {
         serial_LDA(corpus, topic_num, alpha, beta, topic_doc_cnts, topic_word_cnts, n_epoch);
     }
