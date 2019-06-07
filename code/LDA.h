@@ -272,6 +272,7 @@ __global__ static void parallel_LDA_kernel(CORPUS* corpus, int topic_num, float 
                 }
             }
         }
+        /*
         if(epoch%5==0) {
             // 统一一次计数矩阵
             // MATRIX_sub(topic_word_cnts_p[threadIdx.x], topic_word_cnts_p[thread_num]);
@@ -316,6 +317,7 @@ __global__ static void parallel_LDA_kernel(CORPUS* corpus, int topic_num, float 
             }
             __syncthreads();
         }
+        */
     }
 }
 
