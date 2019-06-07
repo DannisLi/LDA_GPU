@@ -29,9 +29,14 @@ void CORPUS_free(CORPUS* corpus) {
 // 功能：从文档中读取语料库并返回；若失败，返回NULL
 CORPUS* CORPUS_from_file(char* file_path) {
     FILE* fp;
-    int i, row_index[10000], rows[1000000], cols[1000000], vals[1000000];    // 使用三元组暂存
+    int i, *row_index, *rows, *cols, *vals;    // 使用三元组暂存
     int doc, word, cnt, last_doc, doc_num, voc_size;
     CORPUS* corpus;
+
+    row_index = (int*)malloc(sizeof(int)*5000);
+    rows = (int*)malloc(sizeof(int)*800000);
+    cols = (int*)malloc(sizeof(int)*800000);
+    vals = (int*)malloc(sizeof(int)*800000);
     
     // 打开文件
     if((fp=fopen(file_path, "r")) == NULL) {
@@ -81,6 +86,11 @@ CORPUS* CORPUS_from_file(char* file_path) {
 
     corpus->cnts = (int*)malloc(sizeof(int)*i);
     memcpy(corpus->cnts, vals, sizeof(int)*i);
+
+    free(row_index);
+    free(rows);
+    free(cols);
+    free(vals);
     
     return corpus;
 }
