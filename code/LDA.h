@@ -408,7 +408,7 @@ void parallel_LDA(CORPUS* corpus_h, int topic_num, float alpha, float beta, MATR
     // 释放设备上的corpus
     CORPUS_free_device(corpus_d);
     
-    printf("after perp: %lf\n", LDA_evaluate(corpus_h, topic_doc_cnts_h, topic_word_cnts_h));
+    printf("%lf\n", LDA_evaluate(corpus_h, topic_doc_cnts_h, topic_word_cnts_h));
 
 }
 

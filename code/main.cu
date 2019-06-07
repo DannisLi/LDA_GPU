@@ -82,7 +82,7 @@ int main(int argc, char** argv) {
     used_time = time(NULL) - used_time;
 
     // 时间
-    printf("%lu s\n", used_time);
+    printf("%lu\n", used_time);
 
     // 释放结果
     MATRIX_free(topic_doc_cnts);
