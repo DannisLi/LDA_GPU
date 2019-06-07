@@ -193,7 +193,7 @@ __global__ static void parallel_LDA_kernel(CORPUS* corpus, int topic_num, float 
     // 主题计数向量topic_cnts
     __shared__ int topic_cnts_p[thread_num][8];
     // 名字代换
-    int doc_num = corpus->doc_num, *corpus_words = corpus->words;
+    int doc_num = corpus->doc_num, voc_size = corpus->voc_size, *corpus_words = corpus->words;
     // 条件概率
     float prob[8];
     // 提前计算voc_size * beta
