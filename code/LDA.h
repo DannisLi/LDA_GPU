@@ -289,11 +289,9 @@ __global__ static void parallel_LDA_kernel(CORPUS* corpus, int topic_num, float 
                 __syncthreads();
             }
             // topic_word_cnts_p[thread_num] = topic_word_cnts_p[0] + topic_word_cnts_p[thread_num]
-            if(threadIdx.x==0) {
-                for(i=0; i<topic_num; i++) {
-                    for(j=0; j<voc_size; j++) {
-                        topic_word_cnts_rows_p[thread_num][i][j] += topic_word_cnts_rows_p[0][i][j];
-                    }
+            for(i=0; i<topic_num; i++) {
+                for(j=threadIdx.x; j<voc_size; j+=thread_num) {
+                    topic_word_cnts_rows_p[thread_num][i][j] += topic_word_cnts_rows_p[0][i][j];
                 }
             }
             __syncthreads();
