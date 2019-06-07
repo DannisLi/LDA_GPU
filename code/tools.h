@@ -10,7 +10,7 @@
 
 
 // CUDA grid配置
-#define thread_num 256
+// #define thread_num 256
 
 // 最大单词表长度
 #define MAX_VOC_SIZE 30000
