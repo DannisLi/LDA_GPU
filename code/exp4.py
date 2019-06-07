@@ -15,7 +15,7 @@ gpu_perp_list, gpu_time_list = [],[]
 
 for thread_num in thread_num_list:
     gpu_perp,gpu_time = 0,0
-    for i in range(5):
+    for i in range(3):
         gpu_res = os.popen('./a.out nips 4 1 60 %d 5 3' % thread_num)
         gpu_res = gpu_res.readlines()
         gpu_perp += float(gpu_res[0].strip()) / 5.
