@@ -13,7 +13,7 @@
 #ifndef LDA_H_
 #define LDA_H_
 
-#define n_epoch 100
+#define n_epoch 200
 
 
 // 功能：随机采样一次多项分布
@@ -268,7 +268,7 @@ __global__ static void parallel_LDA_kernel(CORPUS* corpus, int topic_num, float 
                 }
             }
         }
-        if(epoch%5==0) {
+        if(epoch%10==0) {
             // 统一一次计数矩阵
             // MATRIX_sub(topic_word_cnts_p[threadIdx.x], topic_word_cnts_p[thread_num]);
             for(i=0; i<topic_num; i++) {
