@@ -15,7 +15,6 @@
 
 #define n_epoch 200
 
-
 // 功能：随机采样一次多项分布
 __host__ int sample_from_multinomial(float* prob, int n) {
     int i;
