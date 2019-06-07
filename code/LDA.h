@@ -251,7 +251,7 @@ __global__ static void parallel_LDA_kernel(CORPUS* corpus, int topic_num, float 
                             if(m!=k) {
                                 prob[m] = (topic_doc_cnts_rows[m][i] + alpha) * (topic_word_cnts_rows_p[threadIdx.x][m][w] + beta) / (topic_cnts_p[threadIdx.x][m] + voc_size_times_beta);
                             } else {
-                                prob[m] = (topic_doc_cnts_rows[m][i] - 1 + alpha) * (topic_word_cnts_rows_p[m][w] - 1 + beta) / (topic_cnts_p[m] - 1 + voc_size_times_beta);
+                                prob[m] = (topic_doc_cnts_rows[m][i] - 1 + alpha) * (topic_word_cnts_rows_p[threadIdx.x][m][w] - 1 + beta) / (topic_cnts_p[threadIdx.x][m] - 1 + voc_size_times_beta);
                             }
                         }
                         // 采样新的主题
@@ -331,7 +331,7 @@ void parallel_LDA(CORPUS* corpus_h, int topic_num, float alpha, float beta, MATR
     int topic_cnts_h[topic_num], *topic_cnts_d;
     // doc-word-topic
     int *doc_word_topics_h[topic_num], **doc_word_topics_d, *doc_word_topics_tmp[topic_num];
-    int i, j, w, z, cnt, doc_num = corpus_h->doc_num;
+    int i, j, k, w, z, cnt, doc_num = corpus_h->doc_num;
 
     // 初始化topic counts
     memset(topic_cnts_h, 0 ,sizeof(int)*topic_num);
@@ -350,7 +350,7 @@ void parallel_LDA(CORPUS* corpus_h, int topic_num, float alpha, float beta, MATR
             cnt = corpus_h->cnts[j];
             for(k=0; k<cnt; k++) {
                 z = rand() % topic_num;
-                topic_cnts[z] += 1;
+                topic_cnts_h[z]++;
                 doc_word_topics_h[z][j] += 1;
                 topic_doc_cnts_h->data[z][i] += 1;
                 topic_word_cnts_h->data[z][w] += 1;
@@ -381,7 +381,7 @@ void parallel_LDA(CORPUS* corpus_h, int topic_num, float alpha, float beta, MATR
     cudaMemcpy(doc_word_topics_d, doc_word_topics_tmp, sizeof(int*)*topic_num, cudaMemcpyHostToDevice);
 
     // 将语料库移动到设备端
-    corpus_d = CORPUS_create_the_same_on_device(corpus_h, topic_num);
+    corpus_d = CORPUS_create_the_same_on_device(corpus_h);
 
     // 将corpus的corpus_doc_index部分放到costant memory
     cudaMemcpyToSymbol(corpus_doc_index, corpus_h->doc_index, sizeof(int)*(corpus_h->doc_num+1));
@@ -402,7 +402,7 @@ void parallel_LDA(CORPUS* corpus_h, int topic_num, float alpha, float beta, MATR
     // 释放设备上的topic_word_cnts
     cudaFree(topic_word_cnts_d_p);
     for(i=0; i<=thread_num; i++) {
-        MATRIX_free_core_device(topic_word_cnts_tmp[i]);
+        MATRIX_free_core_device(topic_word_cnts_tmp[i], topic_num);
     }
 
     // 释放设备上的topic_cnts
