@@ -10,8 +10,10 @@
 
 
 
-// ./a.out corpus_name topic_num USE_GPU n_epoch thread_num sync_epoch
+// ./a.out corpus_name topic_num USE_GPU n_epoch thread_num sync_epoch gpu_no
 int main(int argc, char** argv) {
+    // 使用的GPU编号
+    int gpu_no
     // 主题数量
     int topic_num;
     // 是否使用GPU
@@ -41,6 +43,7 @@ int main(int argc, char** argv) {
     if(USE_GPU) {
         thread_num = atoi(argv[5]);
         sync_epoch = atoi(argv[6]);
+        gpu_no = atoi(argv[7]);
     }
 
     // 将名字映射为路径
@@ -78,7 +81,7 @@ int main(int argc, char** argv) {
     
     used_time = time(NULL);
     if(USE_GPU) {
-        cudaSetDevice(0);
+        cudaSetDevice(gpu_no);
         parallel_LDA(corpus, topic_num, alpha, beta, topic_doc_cnts, topic_word_cnts, n_epoch, thread_num, sync_epoch);
     } else {
         serial_LDA(corpus, topic_num, alpha, beta, topic_doc_cnts, topic_word_cnts, n_epoch);

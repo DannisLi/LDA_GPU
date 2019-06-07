@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 
 
 
-n_epoch_list = list(range(10, 201, 10))
+n_epoch_list = list(range(10, 101, 10))
 cpu_perp_list, cpu_time_list = [],[]
 gpu_perp_list, gpu_time_list = [],[]
 
@@ -15,8 +15,8 @@ for n_epoch in n_epoch_list:
     gpu_perp,cpu_perp = 0,0
     gpu_time,cpu_time = 0,0
     for i in range(5):
-        gpu_res = os.popen('./a.out kos 4 1 %d 256 5 0' % n_epoch)
-        cpu_res = os.popen('./a.out kos 4 0 %d' % n_epoch)
+        gpu_res = os.popen('./a.out nips 8 1 %d 256 5 1' % n_epoch)
+        cpu_res = os.popen('./a.out nips 8 0 %d' % n_epoch)
     
         gpu_res = gpu_res.readlines()
         cpu_res = cpu_res.readlines()
@@ -42,7 +42,7 @@ plt.plot(n_epoch_list, gpu_perp_list, label='gpu', color='r', marker='o')
 plt.legend()
 plt.xlabel('epoch')
 plt.ylabel('log likelihood')
-plt.savefig('kos_perp.png')
+plt.savefig('nips_perp.png')
 plt.close()
 
 plt.clf()
@@ -53,5 +53,5 @@ plt.plot(n_epoch_list, gpu_time_list, label='gpu', color='r', marker='o')
 plt.legend()
 plt.xlabel('epoch')
 plt.ylabel('used time')
-plt.savefig('kos_time.png')
+plt.savefig('nips_time.png')
 plt.close()
