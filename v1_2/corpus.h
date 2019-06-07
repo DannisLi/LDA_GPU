@@ -40,6 +40,8 @@ CORPUS* CORPUS_from_file(char* file_path) {
 
     // 读取头部信息
     fscanf(fp, "%d%d", &doc_num, &voc_size);
+
+    printf("fff\n");
     
     // 逐个单词插入
     i = 0;
