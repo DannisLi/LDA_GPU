@@ -10,7 +10,7 @@
 
 
 
-// ./a.out corpus_name topic_num use_gpu n_epoch thread_num
+// ./a.out corpus_name topic_num USE_GPU n_epoch thread_num
 int main(int argc, char** argv) {
     // 主题数量
     int topic_num;
@@ -34,7 +34,7 @@ int main(int argc, char** argv) {
     // 处理命令行参数
     strcpy(name, argv[1]);
     topic_num = atoi(argv[2]);
-    use_gpu = atoi(argv[3]);
+    USE_GPU = atoi(argv[3]);
     n_epoch = atoi(argv[4]);
     thread_num = atoi(argv[5]);
     
