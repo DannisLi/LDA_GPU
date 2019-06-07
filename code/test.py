@@ -35,5 +35,7 @@ plt.figure(figsize=(24,12))
 plt.plot(n_epoch_list, cpu_perp_list, label='cpu', color='b', marker='o')
 plt.plot(n_epoch_list, gpu_perp_list, label='gpu', color='r', marker='o')
 plt.legend()
+plt.xlabel('epoch')
+plt.ylabel('log likelihood')
 plt.savefig('perp.png')
 
