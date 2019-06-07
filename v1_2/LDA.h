@@ -233,36 +233,37 @@ __global__ static void parallel_LDA_kernel(CORPUS* corpus, int topic_num, float 
     // 串行化的LDA算法
     for(epoch=1; epoch<=n_epoch; epoch++) {
         // 每个线程负责一部分文档
-        for(i=threadIdx.x; i<doc_num; i+=thread_num) {
-            for(j=corpus_doc_index[i]; j<corpus_doc_index[i+1]; j++) {
-                w = corpus_words[j];
-                for(k=0; k<topic_num; k++) {
-                    temp[k] = doc_word_topics_d[k][j];
-                }
-                for(k=0; k<topic_num; k++) {
-                    for(h=0; h<temp[k]; h++) {
-                        // 计算每个主题的条件概率
-                        for(m=0; m<topic_num; m++) {
-                            if(m!=k) {
-                                prob[m] = (topic_doc_cnts_rows[m][i] + alpha) * (topic_word_cnts_rows_p[threadIdx.x][m][w] + beta) / (topic_cnts_p[threadIdx.x][m] + voc_size_times_beta);
-                            } else {
-                                prob[m] = (topic_doc_cnts_rows[m][i] - 1 + alpha) * (topic_word_cnts_rows_p[threadIdx.x][m][w] - 1 + beta) / (topic_cnts_p[threadIdx.x][m] - 1 + voc_size_times_beta);
-                            }
+        // for(i=threadIdx.x; i<doc_num; i+=thread_num) {
+        //     for(j=corpus_doc_index[i]; j<corpus_doc_index[i+1]; j++) {
+        for(j=threadIdx.x; j<corpus_doc_index[doc_num+1]; j+=thread_num) {
+            i = corpus_docs[j];
+            w = corpus_words[j];
+            for(k=0; k<topic_num; k++) {
+                temp[k] = doc_word_topics_d[k][j];
+            }
+            for(k=0; k<topic_num; k++) {
+                for(h=0; h<temp[k]; h++) {
+                    // 计算每个主题的条件概率
+                    for(m=0; m<topic_num; m++) {
+                        if(m!=k) {
+                            prob[m] = (topic_doc_cnts_rows[m][i] + alpha) * (topic_word_cnts_rows_p[threadIdx.x][m][w] + beta) / (topic_cnts_p[threadIdx.x][m] + voc_size_times_beta);
+                        } else {
+                            prob[m] = (topic_doc_cnts_rows[m][i] - 1 + alpha) * (topic_word_cnts_rows_p[threadIdx.x][m][w] - 1 + beta) / (topic_cnts_p[threadIdx.x][m] - 1 + voc_size_times_beta);
                         }
-                        // 采样新的主题
-                        z = sample_from_multinomial_on_device(prob, topic_num, &state);
-                        if(z!=k) {
-                            // 删除原来的主题标记
-                            topic_doc_cnts_rows[k][i] -= 1;
-                            topic_word_cnts_rows_p[threadIdx.x][k][w] -= 1;
-                            topic_cnts_p[threadIdx.x][k] -= 1;
-                            doc_word_topics_d[k][j] -= 1;
-                            // 添加新的主题标记
-                            topic_doc_cnts_rows[z][i] += 1;
-                            topic_word_cnts_rows_p[threadIdx.x][z][w] += 1;
-                            topic_cnts_p[threadIdx.x][z] += 1;
-                            doc_word_topics_d[z][j] += 1;
-                        }
+                    }
+                    // 采样新的主题
+                    z = sample_from_multinomial_on_device(prob, topic_num, &state);
+                    if(z!=k) {
+                        // 删除原来的主题标记
+                        topic_doc_cnts_rows[k][i] -= 1;
+                        topic_word_cnts_rows_p[threadIdx.x][k][w] -= 1;
+                        topic_cnts_p[threadIdx.x][k] -= 1;
+                        doc_word_topics_d[k][j] -= 1;
+                        // 添加新的主题标记
+                        topic_doc_cnts_rows[z][i] += 1;
+                        topic_word_cnts_rows_p[threadIdx.x][z][w] += 1;
+                        topic_cnts_p[threadIdx.x][z] += 1;
+                        doc_word_topics_d[z][j] += 1;
                     }
                 }
             }
