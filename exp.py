@@ -1,3 +1,60 @@
+
+
+# ['cpu' or 'gpu']['']
+
+data = {'cpu': {}, 'gpu': {}}
+data['cpu']
+
+参数：
+设备
+线程数
+同步频率
+总轮次
+
+结果：
+对数似然
+用时
+
+cpu_data：迭代轮数，性能类型
+gpu_data: 迭代轮数，线程数，同步次数，性能类型
+
+gpu_kos_data[20][256][5]['perp'] = -3604697.277395
+gpu_kos_data[20][256][5]['time'] = 2
+
+gpu_kos_data[50][256][5]['perp'] = -3533415.313281
+gpu_kos_data[50][256][5]['time'] = 4
+
+gpu_kos_data[100][256][5]['perp'] = -3526299.480126
+gpu_kos_data[100][256][5]['time'] = 8
+
+gpu_kos_data[150][256][5]['perp'] = -3528619.095046
+gpu_kos_data[150][256][5]['time'] = 12
+
+gpu_kos_data[200][256][5]['perp'] = -3525679.747450
+gpu_kos_data[200][256][5]['time'] = 16
+
+
+
+cpu_kos_data[20]['perp'] = -3564298.175238
+cpu_kos_data[20]['time'] = 1
+
+cpu_kos_data[40]['perp'] = -3562655.044735
+cpu_kos_data[40]['time'] = 1
+
+cpu_kos_data[50]['perp'] = -3563526.117362
+cpu_kos_data[50]['time'] = 2
+
+cpu_kos_data[100]['perp'] = -3560721.374783
+cpu_kos_data[100]['time'] = 3
+
+cpu_kos_data[150]['perp'] = -3559786.639224
+cpu_kos_data[150]['time'] = 6
+
+cpu_kos_data[200]['perp'] = -3558645.409743
+cpu_kos_data[200]['time'] = 6
+
+
+
 Please input corpus name: my
 Please input number of topics: 2
 n_epoch 100
