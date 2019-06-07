@@ -28,9 +28,9 @@ for thread_num in thread_num_list:
 
 fig = plt.figure(figsize=(24,12))
 ax = fig.add_subplot(111)
-ln1 = ax.plot(thread_num_list, gpu_perp_list, color='b', marker='o', label='log likelihood')
+ax.plot(thread_num_list, gpu_perp_list, color='b', marker='o', label='log likelihood')
 ax2 = ax.twinx()
-ln2 = ax2.plot(thread_num_list, gpu_time_list, color='r', marker='o', label='used time')
+ax2.plot(thread_num_list, gpu_time_list, color='r', marker='o', label='used time')
 
 fig.legend()
 
