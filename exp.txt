@@ -1,0 +1,66 @@
+Please input corpus name: my
+Please input number of topics: 2
+n_epoch 100
+CPU
+perp: -47850.973916
+used time: 1 s
+GPU 同步 10 线程 32
+perp: -47923.560024
+used time: 150 s
+GPU 同步 10 线程 32
+perp: -47923.560024
+used time: 150 s
+GPU 同步 5 线程 32
+perp: -47859.321472
+used time: 147 s
+GPU 同步 1 线程 32
+perp: -47857.426468
+used time: 141 s
+GPU 同步 2 线程 32
+perp: -47851.303134
+used time: 144 s
+GPU 同步 2 线程 64
+perp: -47851.105344
+used time: 96 s
+GPU 同步 2 线程 128
+perp: -47854.884812
+used time: 53 s
+GPU 同步 2 线程 256
+perp: -47848.136999
+used time: 34 s
+GPU 同步 2 线程 512
+perp: -47852.889986
+used time: 23 s
+GPU 同步 2 线程 1024
+perp: -47858.992154
+used time: 15 s
+GPU 同步 5 线程 1024
+perp: -47851.728088
+used time: 16 s
+GPU 同步 10 线程 1024
+perp: -47921.862716
+used time: 15 s
+GPU 同步 20 线程 1024
+perp: -47990.402273
+used time: 16 s
+
+Please input corpus name: kos
+Please input number of topics: 4
+n_epoch 100
+CPU
+perp: -3654810.850082
+used time: 3 s
+GPU 同步 2 线程 1024
+perp: -3655279.328965
+used time: 1261 s
+GPU 同步 5 线程 1024
+perp: -3655661.186767
+used time: 764 s
+GPU 同步 10 线程 1024
+perp: -3670141.541600
+used time: 590 s
+GPU 同步 10 线程 1024
+perp: -3671339.719296
+used time: 186 s
+
+
