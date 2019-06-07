@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 
 os.system('nvcc main.cu -w')
 
-name = 'kos'
+
 
 n_epoch_list = list(range(10, 201, 10))
 cpu_perp_list, cpu_time_list = [],[]
@@ -27,9 +27,11 @@ for n_epoch in n_epoch_list:
     gpu_perp_list.append(gpu_perp)
     # time_list.append(time)
 
+plt.figure(figsize=(24,12))
 
-plt.plot(n_epoch_list, cpu_perp_list, label='cpu', c='b')
-plt.plot(n_epoch_list, gpu_perp_list, label='gpu', c='r')
+
+plt.plot(n_epoch_list, cpu_perp_list, label='cpu', color='b', marker='o')
+plt.plot(n_epoch_list, gpu_perp_list, label='gpu', color='r', marker='o')
 plt.legend()
 plt.savefig('perp.png')
 
