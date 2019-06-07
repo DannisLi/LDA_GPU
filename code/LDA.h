@@ -268,7 +268,6 @@ __global__ static void parallel_LDA_kernel(CORPUS* corpus, int topic_num, float 
                 }
             }
         }
-        /*
         if(epoch%5==0) {
             // 统一一次计数矩阵
             // MATRIX_sub(topic_word_cnts_p[threadIdx.x], topic_word_cnts_p[thread_num]);
@@ -313,7 +312,6 @@ __global__ static void parallel_LDA_kernel(CORPUS* corpus, int topic_num, float 
             }
             __syncthreads();
         }
-        */
     }
 }
 
@@ -392,8 +390,8 @@ void parallel_LDA(CORPUS* corpus_h, int topic_num, float alpha, float beta, MATR
 
     // 拷贝设备端的计数矩阵
     MATRIX_move_core_to_host(topic_doc_cnts_h, topic_doc_cnts_d);
-    // MATRIX_move_core_to_host(topic_word_cnts_h, topic_word_cnts_tmp[thread_num]);
-    MATRIX_move_core_to_host(topic_word_cnts_h, topic_word_cnts_tmp[0]);
+    MATRIX_move_core_to_host(topic_word_cnts_h, topic_word_cnts_tmp[thread_num]);
+    // MATRIX_move_core_to_host(topic_word_cnts_h, topic_word_cnts_tmp[0]);
 
     // 释放设备端矩阵topic_doc_cnts
     MATRIX_free_core_device(topic_doc_cnts_d, topic_num);
