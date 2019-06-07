@@ -1,1 +1,0 @@
-nvcc main.c
