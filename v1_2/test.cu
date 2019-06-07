@@ -15,6 +15,7 @@
 int main()
 {
     CORPUS* corpus = CORPUS_from_file("../data/nips.corpus");
+    printf("aaa\n");
     CORPUS_show(corpus, stdout);
     CORPUS_free(corpus);
     
