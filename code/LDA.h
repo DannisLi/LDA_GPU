@@ -197,7 +197,7 @@ __global__ static void parallel_LDA_kernel(CORPUS* corpus, int topic_num, float 
     // 主题计数向量topic_cnts
     __shared__ int topic_cnts_p[thread_num][8];
     // 名字代换
-    int doc_num = corpus->doc_num, voc_size = corpus->voc_size, *corpus_words = corpus->words;
+    int doc_num = corpus->doc_num, *corpus_words = corpus->words;
     // 条件概率
     float prob[8];
     // 提前计算voc_size * beta
@@ -260,13 +260,13 @@ __global__ static void parallel_LDA_kernel(CORPUS* corpus, int topic_num, float 
                             // 删除原来的主题标记
                             topic_doc_cnts_rows[k][i] -= 1;
                             topic_word_cnts_rows_p[threadIdx.x][k][w] -= 1;
-                            topic_cnts_p[threadIdx.x][k]--;
-                            doc_word_topics_d[k][j]--;
+                            topic_cnts_p[threadIdx.x][k] -= 1;
+                            doc_word_topics_d[k][j] -= 1;
                             // 添加新的主题标记
-                            topic_doc_cnts_rows[z][i]++;
-                            topic_word_cnts_rows_p[threadIdx.x][z][w]++;
-                            topic_cnts_p[threadIdx.x][z]++;
-                            doc_word_topics_d[z][j]++;
+                            topic_doc_cnts_rows[z][i] += 1;
+                            topic_word_cnts_rows_p[threadIdx.x][z][w] += 1;
+                            topic_cnts_p[threadIdx.x][z] += 1;
+                            doc_word_topics_d[z][j] += 1;
                         }
                     }
                 }
@@ -396,7 +396,8 @@ void parallel_LDA(CORPUS* corpus_h, int topic_num, float alpha, float beta, MATR
 
     // 拷贝设备端的计数矩阵
     MATRIX_move_core_to_host(topic_doc_cnts_h, topic_doc_cnts_d);
-    MATRIX_move_core_to_host(topic_word_cnts_h, topic_word_cnts_tmp[thread_num]);
+    // MATRIX_move_core_to_host(topic_word_cnts_h, topic_word_cnts_tmp[thread_num]);
+    MATRIX_move_core_to_host(topic_word_cnts_h, topic_word_cnts_tmp[0]);
 
     // 释放设备端矩阵topic_doc_cnts
     MATRIX_free_core_device(topic_doc_cnts_d, topic_num);
