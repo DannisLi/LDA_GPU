@@ -96,7 +96,7 @@ int main()
     // used_time = clock();
     used_time = time(NULL);
     if(USE_GPU) {
-        // parallel_LDA(corpus, topic_num, alpha, beta, topic_doc_cnts, topic_word_cnts);
+        parallel_LDA(corpus, topic_num, alpha, beta, topic_doc_cnts, topic_word_cnts);
     } else {
         serial_LDA(corpus, topic_num, alpha, beta, topic_doc_cnts, topic_word_cnts);
     }

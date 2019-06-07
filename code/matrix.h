@@ -166,7 +166,7 @@ MATRIX* MATRIX_create_the_same_on_device(MATRIX* mat_h) {
 }
 
 // 在设备端创造矩阵的核
-float** MATRIX_create_the_core_on_device(MATRIX* mat_h) {
+float** MATRIX_create_core_on_device(MATRIX* mat_h) {
     int i;
     float** core_d;
     MATRIX mat_tmp;
