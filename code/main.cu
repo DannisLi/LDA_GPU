@@ -36,7 +36,8 @@ int main(int argc, char** argv) {
     topic_num = atoi(argv[2]);
     USE_GPU = atoi(argv[3]);
     n_epoch = atoi(argv[4]);
-    thread_num = atoi(argv[5]);
+    if(USE_GPU)
+        thread_num = atoi(argv[5]);
     
 
     // 将名字映射为路径
