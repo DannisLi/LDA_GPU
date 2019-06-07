@@ -13,7 +13,7 @@
 // ./a.out corpus_name topic_num USE_GPU n_epoch thread_num sync_epoch gpu_no
 int main(int argc, char** argv) {
     // 使用的GPU编号
-    int gpu_no
+    int gpu_no;
     // 主题数量
     int topic_num;
     // 是否使用GPU
@@ -25,7 +25,7 @@ int main(int argc, char** argv) {
     // 同步的轮数
     int sync_epoch;
     // 语料库的名字和路径
-    char name[10], *corpus_path, *vocab_path;
+    char name[10], *corpus_path;
     // 先验参数
     float alpha, beta;
     // 语料库对象
@@ -49,16 +49,12 @@ int main(int argc, char** argv) {
     // 将名字映射为路径
     if(strcmp(name, "kos") == 0) {
         corpus_path = KOS_COR;
-        vocab_path = KOS_VOC;
     } else if(strcmp(name, "nips") == 0) {
         corpus_path = NIPS_COR;
-        vocab_path = NIPS_VOC;
     } else if(strcmp(name, "enron") == 0) {
         corpus_path = ENRON_COR;
-        vocab_path = ENRON_VOC;
     } else if(strcmp(name, "my") == 0) {
         corpus_path = MY_COR;
-        vocab_path = MY_VOC;
     } else {
         printf("Wrong corpus name!\n");
         return -1;
