@@ -15,14 +15,14 @@
 
 // CUDA grid配置
 #define block_num 1
-#define thread_num 1
+#define thread_num 256
 
 // 最大单词表长度
 #define MAX_VOC_SIZE 30000
 // 最大文档数量
 #define MAX_DOC_NUM 40000
 // 最大主题数量
-#define MAX_TOPIC_NUM 20
+#define MAX_TOPIC_NUM 8
 
 #define max(A, B) ((A) > (B) ? (A) : (B))
 #define min(A, B) ((A) < (B) ? (A) : (B))
