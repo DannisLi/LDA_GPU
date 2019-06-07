@@ -160,16 +160,12 @@ void serial_LDA(CORPUS* corpus, int topic_num, float alpha, float beta, MATRIX* 
                             // 修改相关计数
                             // 删除原来的主题标记
                             topic_doc_cnts_data[k][i] -= 1;
-                            // MATRIX_decrease(topic_doc_cnts, k, i);
                             topic_word_cnts_data[k][w] -= 1;
-                            // MATRIX_decrease(topic_word_cnts, k, w);
                             topic_cnts[k]--;
                             doc_word_topics[k][j]--;
                             // 添加新的主题标记
                             topic_doc_cnts_data[z][i] += 1;
-                            // MATRIX_increase(topic_doc_cnts, z, i);
                             topic_word_cnts_data[z][w] += 1;
-                            // MATRIX_increase(topic_word_cnts, z, w);
                             topic_cnts[z]++;
                             doc_word_topics[z][j]++;
                         }
@@ -240,7 +236,7 @@ __global__ static void parallel_LDA_kernel(CORPUS* corpus, int topic_num, float 
         // 每个线程负责一部分文档
         for(i=threadIdx.x; i<doc_num; i+=thread_num) {
             for(j=corpus_doc_index[i]; j<corpus_doc_index[i+1]; j++) {
-                w = corpus_words[i];
+                w = corpus_words[j];
                 for(k=0; k<topic_num; k++) {
                     temp[k] = doc_word_topics_d[k][j];
                 }
