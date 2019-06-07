@@ -380,7 +380,7 @@ void parallel_LDA(CORPUS* corpus_h, int topic_num, float alpha, float beta, MATR
     
     // printf("before perp: %lf\n", LDA_evaluate(corpus_h, topic_doc_cnts_h, topic_word_cnts_h));
     // 在设备端运行LDA算法
-    parallel_LDA_kernel<<<1, thread_num>>>(corpus_d, topic_num, alpha, beta, topic_doc_cnts_d, topic_word_cnts_d_p, topic_cnts_d, doc_word_topics_d, rand(), n_epoch);
+    parallel_LDA_kernel<<<1, thread_num>>>(corpus_d, topic_num, alpha, beta, topic_doc_cnts_d, topic_word_cnts_d_p, topic_cnts_d, doc_word_topics_d, rand(), n_epoch, thread_num);
 
     // 拷贝设备端的计数矩阵
     MATRIX_move_core_to_host(topic_doc_cnts_h, topic_doc_cnts_d);
