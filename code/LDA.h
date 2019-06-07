@@ -13,7 +13,6 @@
 #ifndef LDA_H_
 #define LDA_H_
 
-#define n_epoch 100
 
 // 功能：随机采样一次多项分布
 __host__ int sample_from_multinomial(float* prob, int n) {
@@ -102,7 +101,7 @@ double LDA_evaluate(CORPUS* corpus, MATRIX* topic_doc_cnts, MATRIX* topic_word_c
 
 
 // 功能：串行化LDA算法
-void serial_LDA(CORPUS* corpus, int topic_num, float alpha, float beta, MATRIX* topic_doc_cnts,  MATRIX* topic_word_cnts) {
+void serial_LDA(CORPUS* corpus, int topic_num, float alpha, float beta, MATRIX* topic_doc_cnts,  MATRIX* topic_word_cnts, int n_epoch) {
     int i, j, k, h, m, w, z, cnt, epoch, doc_num = corpus->doc_num;
     float prob[topic_num];
     int temp[topic_num];
@@ -133,7 +132,7 @@ void serial_LDA(CORPUS* corpus, int topic_num, float alpha, float beta, MATRIX* 
         }
     }
 
-    printf("before perp: %lf\n", LDA_evaluate(corpus, topic_doc_cnts, topic_word_cnts));
+    // printf("before perp: %lf\n", LDA_evaluate(corpus, topic_doc_cnts, topic_word_cnts));
     
     // 串行化的LDA算法
     for(epoch=1; epoch<=n_epoch; epoch++) {
@@ -184,13 +183,13 @@ void serial_LDA(CORPUS* corpus, int topic_num, float alpha, float beta, MATRIX* 
 
 __constant__ int corpus_doc_index[4000];
 
-__global__ static void parallel_LDA_kernel(CORPUS* corpus, int topic_num, float alpha, float beta, float** topic_doc_cnts, float*** topic_word_cnts_p, int* topic_cnts, int** doc_word_topics_d, int seed) {
+__global__ static void parallel_LDA_kernel(CORPUS* corpus, int topic_num, float alpha, float beta, float** topic_doc_cnts, float*** topic_word_cnts_p, int* topic_cnts, int** doc_word_topics_d, int seed, int n_epoch, int thread_num) {
     // 矩阵topic_doc_cnts的行指针
     __shared__ float* topic_doc_cnts_rows[8];
     // 每个矩阵topic_word_cnts的行指针
-    __shared__ float* topic_word_cnts_rows_p[thread_num+1][8];
+    __shared__ float* topic_word_cnts_rows_p[256+1][8];
     // 主题计数向量topic_cnts
-    __shared__ int topic_cnts_p[thread_num][8];
+    __shared__ int topic_cnts_p[256][8];
     // 名字代换
     int doc_num = corpus->doc_num, voc_size = corpus->voc_size, *corpus_words = corpus->words;
     // 条件概率
@@ -313,7 +312,7 @@ __global__ static void parallel_LDA_kernel(CORPUS* corpus, int topic_num, float 
 }
 
 
-void parallel_LDA(CORPUS* corpus_h, int topic_num, float alpha, float beta, MATRIX* topic_doc_cnts_h, MATRIX* topic_word_cnts_h) { 
+void parallel_LDA(CORPUS* corpus_h, int topic_num, float alpha, float beta, MATRIX* topic_doc_cnts_h, MATRIX* topic_word_cnts_h, int n_epoch, int thread_num) { 
     // topic doc
     float **topic_doc_cnts_d;
     // topic word
@@ -379,11 +378,9 @@ void parallel_LDA(CORPUS* corpus_h, int topic_num, float alpha, float beta, MATR
     // 将corpus的corpus_doc_index部分放到costant memory
     cudaMemcpyToSymbol(corpus_doc_index, corpus_h->doc_index, sizeof(int)*(corpus_h->doc_num+1));
     
-    // printf("before kernel\n");
-    printf("before perp: %lf\n", LDA_evaluate(corpus_h, topic_doc_cnts_h, topic_word_cnts_h));
+    // printf("before perp: %lf\n", LDA_evaluate(corpus_h, topic_doc_cnts_h, topic_word_cnts_h));
     // 在设备端运行LDA算法
-    parallel_LDA_kernel<<<1, thread_num>>>(corpus_d, topic_num, alpha, beta, topic_doc_cnts_d, topic_word_cnts_d_p, topic_cnts_d, doc_word_topics_d, rand());
-    // printf("after kernel\n");
+    parallel_LDA_kernel<<<1, thread_num>>>(corpus_d, topic_num, alpha, beta, topic_doc_cnts_d, topic_word_cnts_d_p, topic_cnts_d, doc_word_topics_d, rand(), n_epoch);
 
     // 拷贝设备端的计数矩阵
     MATRIX_move_core_to_host(topic_doc_cnts_h, topic_doc_cnts_d);

@@ -7,14 +7,9 @@
 #ifndef TOOLS_H_
 #define TOOLS_H_
 
-// 是否处于调试状态
-#define DEBUG 0
 
-// 是否使用GPU
-// #define USE_GPU 0
 
 // CUDA grid配置
-#define block_num 1
 #define thread_num 256
 
 // 最大单词表长度
@@ -52,31 +47,21 @@ bool InitCUDA()
     }
 
     int i;
-    bool flag = false;
     for(i = 0; i < count; i++) {
         cudaDeviceProp prop;
         if(cudaGetDeviceProperties(&prop, i) == cudaSuccess) {
             if(prop.major >= 1) {
-                flag = true;
-                if(DEBUG) {
-                    printf("name: %s\n", prop.name);
-                    printf("Global Memory: %lu\n", prop.totalGlobalMem);
-                    printf("Shared Memory: %lu\n", prop.sharedMemPerBlock);
-                    printf("Registers: %d\n", prop.regsPerBlock);
-                    printf("maxThreadsPerBlock: %d\n", prop.maxThreadsPerBlock);
-                    printf("totalConstMem: %lu\n", prop.totalConstMem);
-                    putchar('\n');
-                }
+                break;
             }
         }
     }
 
-    if(!flag) {
+    if(i==count) {
         fprintf(stderr, "There is no device supporting CUDA 1.x.\n");
         return false;
     }
 
-    cudaSetDevice(0);
+    cudaSetDevice(i);
 
     return true;
 }

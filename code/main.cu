@@ -10,16 +10,18 @@
 
 
 
-int main()
-{
+// ./a.out corpus_name topic_num use_gpu n_epoch thread_num
+int main(int argc, char** argv) {
     // 主题数量
     int topic_num;
     // 是否使用GPU
     int USE_GPU;
+    // 迭代轮数
+    int n_epoch;
+    // 线程数量
+    int thread_num;
     // 语料库的名字和路径
     char name[10], *corpus_path, *vocab_path;
-    // 单词表
-    // char** vocab;
     // 先验参数
     float alpha, beta;
     // 语料库对象
@@ -27,23 +29,15 @@ int main()
     // 消耗时间
     clock_t used_time;
     // LDA result
-	MATRIX *topic_doc_cnts, *topic_word_cnts;
+    MATRIX *topic_doc_cnts, *topic_word_cnts;
     
-
-    // 输入是否适用GPU
-    printf("USE GPU ? (0:don't use  1:use): ");
-    scanf("%d", &USE_GPU);
-
-    // 检查CUDA
-    if(USE_GPU && !InitCUDA()) {
-        printf("No CUDA device!\n");
-        return -1;
-    }
-
+    // 处理命令行参数
+    strcpy(name, argv[1]);
+    topic_num = atoi(argv[2]);
+    use_gpu = atoi(argv[3]);
+    n_epoch = atoi(argv[4]);
+    thread_num = atoi(argv[5]);
     
-    // 输入语料库名称
-    printf("Please input corpus name: ");
-    scanf("%s", name);
 
     // 将名字映射为路径
     if(strcmp(name, "kos") == 0) {
@@ -63,27 +57,12 @@ int main()
         return -1;
     }
 
-    if(DEBUG) {
-        printf("\nYour corpus path: %s\nYour vocab path: %s\n\n", corpus_path, vocab_path);
-    }
-
-    printf("Please input number of topics: ");
-    scanf("%d", &topic_num);
-
-    if(DEBUG) {
-        printf("\nYour topic number: %d\n\n", topic_num);
-    }
 
     // 随机种子
 	srand((unsigned)time(NULL));
 
-
     // 读取语料库
-	if((corpus = CORPUS_from_file(corpus_path)) == NULL) {
-        if(DEBUG)
-            printf("Fail to read the corpus from file!\n");
-        return -1;
-    }
+    corpus = CORPUS_from_file(corpus_path);
 
 	// 计算先验参数：alpha 和 beta
 	alpha = 1. / topic_num;
@@ -93,18 +72,17 @@ int main()
     topic_doc_cnts = MATRIX_new(topic_num, corpus->doc_num);
     topic_word_cnts = MATRIX_new(topic_num, corpus->voc_size);
     
-    // used_time = clock();
     used_time = time(NULL);
     if(USE_GPU) {
-        parallel_LDA(corpus, topic_num, alpha, beta, topic_doc_cnts, topic_word_cnts);
+        cudaSetDevice(0);
+        parallel_LDA(corpus, topic_num, alpha, beta, topic_doc_cnts, topic_word_cnts, n_epoch, thread_num);
     } else {
-        serial_LDA(corpus, topic_num, alpha, beta, topic_doc_cnts, topic_word_cnts);
+        serial_LDA(corpus, topic_num, alpha, beta, topic_doc_cnts, topic_word_cnts, n_epoch);
     }
-    // used_time = clock() - used_time;
     used_time = time(NULL) - used_time;
 
-    // 报告结果
-    printf("used time: %lu s\n", used_time);
+    // 时间
+    printf("%lu s\n", used_time);
 
     // 释放结果
     MATRIX_free(topic_doc_cnts);
