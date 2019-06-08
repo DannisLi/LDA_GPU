@@ -32,7 +32,7 @@ ax.plot(thread_num_list, gpu_perp_list, color='b', marker='o', label='log likeli
 ax2 = ax.twinx()
 ax2.plot(thread_num_list, gpu_time_list, color='r', marker='o', label='used time')
 
-fig.legend()
+fig.legend(loc=1, bbox_to_anchor=(1,1), bbox_transform=ax.transAxes)
 
 ax.set_xlabel('thread number')
 ax.set_ylabel('log likelihood')

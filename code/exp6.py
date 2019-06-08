@@ -16,7 +16,7 @@ gpu_perp_list, gpu_time_list = [],[]
 for sync_epoch in sync_epoch_list:
     gpu_perp,gpu_time = 0,0
     for i in range(5):
-        gpu_res = os.popen('./a.out nips 4 1 60 256 %d 2' % sync_epoch)
+        gpu_res = os.popen('./a.out nips 4 1 60 256 %d 3' % sync_epoch)
         gpu_res = gpu_res.readlines()
         gpu_perp += float(gpu_res[0].strip()) / 5.
         gpu_time += int(gpu_res[1].strip()) / 5.
@@ -32,7 +32,7 @@ ax.plot(sync_epoch_list, gpu_perp_list, color='b', marker='o', label='log likeli
 ax2 = ax.twinx()
 ax2.plot(sync_epoch_list, gpu_time_list, color='r', marker='o', label='used time')
 
-fig.legend()
+fig.legend(loc=1, bbox_to_anchor=(1,1), bbox_transform=ax.transAxes)
 
 ax.set_xlabel('epochs per sync')
 ax.set_ylabel('log likelihood')

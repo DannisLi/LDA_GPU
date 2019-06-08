@@ -15,11 +15,11 @@ gpu_perp_list, gpu_time_list = [],[]
 
 for thread_num in thread_num_list:
     gpu_perp,gpu_time = 0,0
-    for i in range(3):
+    for i in range(5):
         gpu_res = os.popen('./a.out kos 4 1 60 %d 5 0' % thread_num)
         gpu_res = gpu_res.readlines()
-        gpu_perp += float(gpu_res[0].strip()) / 3.
-        gpu_time += int(gpu_res[1].strip()) / 3.
+        gpu_perp += float(gpu_res[0].strip()) / 5.
+        gpu_time += int(gpu_res[1].strip()) / 5.
     
     print(thread_num, gpu_perp, gpu_time)
     gpu_perp_list.append(gpu_perp)
@@ -32,7 +32,7 @@ ax.plot(thread_num_list, gpu_perp_list, color='b', marker='o', label='log likeli
 ax2 = ax.twinx()
 ax2.plot(thread_num_list, gpu_time_list, color='r', marker='o', label='used time')
 
-fig.legend()
+fig.legend(loc=1, bbox_to_anchor=(1,1), bbox_transform=ax.transAxes)
 
 ax.set_xlabel('thread number')
 ax.set_ylabel('log likelihood')
